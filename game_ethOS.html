@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diamond Logo Catch Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjI0MCIgdmlld0JveD0iMCAwIDIwMCAyNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnR3JhZCIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiM5YmI1ZmY7c3RvcC1vcGFjaXR5OjEiIC8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0b3AtY29sb3I6IzZiOGJmZjtzdG9wLW9wYWNpdHk6MSIgLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxwYXRoIGQ9Ik0xMDAgMjAgTDE2MCAxMjAgTDEwMCAyMjAgTDQwIDEyMCBaIiBmaWxsPSJ1cmwoI2JnR3JhZCkiIHN0cm9rZT0ibm9uZSIvPgogIDxyZWN0IHg9IjcwIiB5PSI4NSIgd2lkdGg9IjYiIGhlaWdodD0iOCIgZmlsbD0iIzAwMCIgcng9IjEiLz4KICA8cmVjdCB4PSIxMjQiIHk9Ijg1IiB3aWR0aD0iNiIgaGVpZ2h0PSI4IiBmaWxsPSIjMDAwIiByeD0iMSIvPgogIDxwYXRoIGQ9Ik0xMDAgMjAgTDEwMCAyMjAiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIzIi8+CiAgPHBhdGggZD0iTTc1IDE1MCBRMTAwIDE2NSAxMjUgMTUwIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMyIgZmlsbD0ibm9uZSIvPgo8L3N2Zz4=');
+            background-repeat: repeat;
+            background-size: 150px 180px;
+            opacity: 0.1;
+            z-index: -1;
+            animation: backgroundFloat 20s ease-in-out infinite;
+        }
+
+        @keyframes backgroundFloat {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(10px, -10px) rotate(1deg); }
+            50% { transform: translate(-5px, 10px) rotate(-0.5deg); }
+            75% { transform: translate(-10px, -5px) rotate(0.5deg); }
+        }
+
+        .game-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            cursor: crosshair;
+        }
+
+        .logo {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+            animation: float 2s ease-in-out infinite;
+        }
+
+        .logo:hover {
+            transform: scale(1.1);
+        }
+
+        .logo.clicked {
+            animation: pop 0.3s ease;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        .score-board {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+        }
+
+        .score {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .timer {
+            font-size: 18px;
+            color: #666;
+        }
+
+        .game-over {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            display: none;
+            z-index: 200;
+        }
+
+        .game-over h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 32px;
+        }
+
+        .final-score {
+            font-size: 24px;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .restart-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .restart-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .instructions {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            max-width: 200px;
+            font-size: 14px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container" id="gameContainer">
+        <div class="score-board">
+            <div class="score">Score: <span id="score">0</span></div>
+            <div class="timer">Time: <span id="timer">30</span>s</div>
+        </div>
+        
+        <div class="instructions">
+            <strong>How to Play:</strong><br>
+            Click the moving ethOS logo to score points! You have 30 seconds. Click to start audio and enjoy the music!
+        </div>
+
+        <div class="game-over" id="gameOver">
+            <h2>Game Over!</h2>
+            <div class="final-score">Final Score: <span id="finalScore">0</span></div>
+            <button class="restart-btn" onclick="startGame()">Play Again</button>
+        </div>
+    </div>
+
+    <script>
+        let score = 0;
+        let timeLeft = 30;
+        let gameActive = false;
+        let gameTimer;
+        let spawnTimer;
+        
+        // Audio context for sound effects
+        let audioContext;
+        let backgroundMusic;
+
+        // Initialize audio
+        function initAudio() {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        // Create background music using Web Audio API
+        function createBackgroundMusic() {
+            if (!audioContext) initAudio();
+            
+            const notes = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25]; // C major scale
+            let noteIndex = 0;
+            
+            function playNote() {
+                if (!gameActive) return;
+                
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(notes[noteIndex], audioContext.currentTime);
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.1);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.8);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.8);
+                
+                noteIndex = (noteIndex + 1) % notes.length;
+                
+                setTimeout(playNote, 600 + Math.random() * 400);
+            }
+            
+            playNote();
+        }
+
+        // Click sound effect
+        function playClickSound() {
+            if (!audioContext) initAudio();
+            
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(1200, audioContext.currentTime + 0.1);
+            oscillator.type = 'square';
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.1);
+        }
+
+        // Game over sound effect
+        function playGameOverSound() {
+            if (!audioContext) initAudio();
+            
+            // Play a descending melody for game over
+            const notes = [523.25, 493.88, 440.00, 392.00, 349.23];
+            
+            notes.forEach((freq, index) => {
+                setTimeout(() => {
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
+                    oscillator.type = 'triangle';
+                    
+                    gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                    
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.5);
+                }, index * 200);
+            });
+        }
+
+        const gameContainer = document.getElementById('gameContainer');
+        const scoreElement = document.getElementById('score');
+        const timerElement = document.getElementById('timer');
+        const gameOverElement = document.getElementById('gameOver');
+        const finalScoreElement = document.getElementById('finalScore');
+
+        function createLogo() {
+            const logo = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            logo.setAttribute('class', 'logo');
+            logo.setAttribute('viewBox', '0 0 200 240');
+            logo.innerHTML = `
+                <defs>
+                    <linearGradient id="grad${Date.now()}" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#9bb5ff;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#6b8bff;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <path d="M100 20 L160 120 L100 220 L40 120 Z" fill="url(#grad${Date.now()})" stroke="none"/>
+                <rect x="70" y="85" width="6" height="8" fill="#000" rx="1"/>
+                <rect x="124" y="85" width="6" height="8" fill="#000" rx="1"/>
+                <path d="M100 20 L100 220" stroke="#000" stroke-width="3"/>
+                <path d="M75 150 Q100 165 125 150" stroke="#000" stroke-width="3" fill="none"/>
+            `;
+
+            // Random position
+            const maxX = window.innerWidth - 80;
+            const maxY = window.innerHeight - 80;
+            logo.style.left = Math.random() * maxX + 'px';
+            logo.style.top = Math.random() * maxY + 'px';
+
+            // Add click event
+            logo.addEventListener('click', function() {
+                if (gameActive) {
+                    score++;
+                    scoreElement.textContent = score;
+                    logo.classList.add('clicked');
+                    
+                    // Play click sound
+                    playClickSound();
+                    
+                    setTimeout(() => {
+                        if (logo.parentNode) {
+                            logo.parentNode.removeChild(logo);
+                        }
+                    }, 300);
+                }
+            });
+
+            // Remove after 3 seconds if not clicked
+            setTimeout(() => {
+                if (logo.parentNode) {
+                    logo.parentNode.removeChild(logo);
+                }
+            }, 3000);
+
+            gameContainer.appendChild(logo);
+        }
+
+        function startGame() {
+            score = 0;
+            timeLeft = 30;
+            gameActive = true;
+            scoreElement.textContent = '0';
+            timerElement.textContent = '30';
+            gameOverElement.style.display = 'none';
+
+            // Initialize audio and start background music
+            initAudio();
+            createBackgroundMusic();
+
+            // Clear existing logos
+            const existingLogos = document.querySelectorAll('.logo');
+            existingLogos.forEach(logo => logo.remove());
+
+            // Start spawning logos
+            spawnTimer = setInterval(() => {
+                if (gameActive) {
+                    createLogo();
+                }
+            }, 800);
+
+            // Start countdown
+            gameTimer = setInterval(() => {
+                timeLeft--;
+                timerElement.textContent = timeLeft;
+                
+                if (timeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
+        }
+
+        function endGame() {
+            gameActive = false;
+            clearInterval(gameTimer);
+            clearInterval(spawnTimer);
+            
+            // Play game over sound
+            playGameOverSound();
+            
+            // Remove remaining logos
+            const remainingLogos = document.querySelectorAll('.logo');
+            remainingLogos.forEach(logo => logo.remove());
+            
+            finalScoreElement.textContent = score;
+            gameOverElement.style.display = 'block';
+        }
+
+        // Start the game immediately
+        startGame();
+    </script>
+</body>
+</html>
